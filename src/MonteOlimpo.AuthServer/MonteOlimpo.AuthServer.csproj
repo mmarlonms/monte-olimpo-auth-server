@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <UserSecretsId>b16446bb-d24c-4c55-b2f3-418bf2672ebf</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\marlo\Desktop\monte-olimpo-auth-server\src\MonteOlimpo.AuthServer\MonteOlimpo.AuthServer.xml</DocumentationFile>
+    <NoWarn>1701;1702;CS1591;S1118</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MonteOlimpo.Base.ApiBoot" Version="3.0.2" />
+    <PackageReference Include="MonteOlimpo.Base.Authentication" Version="3.0.1" />
+    <PackageReference Include="MonteOlimpo.Base.Core.CrossCutting" Version="3.0.2" />
+    <PackageReference Include="MonteOlimpo.Base.Extensions" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MonteOlimpo.AuthServer.Abstractions\MonteOlimpo.Identity.Abstractions.csproj" />
+    <ProjectReference Include="..\MonteOlimpo.AuthServer.EntityFrameworkCore\MonteOlimpo.Identity.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\MonteOlimpo.AuthServer.JwtBearer\MonteOlimpo.Authentication.JwtBearer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="serilogsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

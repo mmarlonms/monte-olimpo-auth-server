@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonteOlimpo.AuthServer", "MonteOlimpo.AuthServer\MonteOlimpo.AuthServer.csproj", "{52F11B1C-090D-4A4B-A1B1-A933CF93C29E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonteOlimpo.Authentication.JwtBearer", "MonteOlimpo.AuthServer.JwtBearer\MonteOlimpo.Authentication.JwtBearer.csproj", "{E00AAEFB-2BFE-4659-9BFE-E761B091767A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonteOlimpo.Identity.EntityFrameworkCore", "MonteOlimpo.AuthServer.EntityFrameworkCore\MonteOlimpo.Identity.EntityFrameworkCore.csproj", "{A1F4C62D-D48F-4682-A117-C02C0F353A29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonteOlimpo.Identity.Abstractions", "MonteOlimpo.AuthServer.Abstractions\MonteOlimpo.Identity.Abstractions.csproj", "{BE8FC1B8-E5A3-412B-9912-27CE292A754C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52F11B1C-090D-4A4B-A1B1-A933CF93C29E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F11B1C-090D-4A4B-A1B1-A933CF93C29E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F11B1C-090D-4A4B-A1B1-A933CF93C29E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F11B1C-090D-4A4B-A1B1-A933CF93C29E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00AAEFB-2BFE-4659-9BFE-E761B091767A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00AAEFB-2BFE-4659-9BFE-E761B091767A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00AAEFB-2BFE-4659-9BFE-E761B091767A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00AAEFB-2BFE-4659-9BFE-E761B091767A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F4C62D-D48F-4682-A117-C02C0F353A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F4C62D-D48F-4682-A117-C02C0F353A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F4C62D-D48F-4682-A117-C02C0F353A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F4C62D-D48F-4682-A117-C02C0F353A29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE8FC1B8-E5A3-412B-9912-27CE292A754C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE8FC1B8-E5A3-412B-9912-27CE292A754C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE8FC1B8-E5A3-412B-9912-27CE292A754C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE8FC1B8-E5A3-412B-9912-27CE292A754C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D5FC400-C1FA-4123-8B0C-B3DF017D5B71}
+	EndGlobalSection
+EndGlobal

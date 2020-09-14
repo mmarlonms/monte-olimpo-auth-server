@@ -1,0 +1,57 @@
+version: '3.4'
+services:
+
+  sqlserver:
+    restart: always
+    container_name: sqlserver
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      SA_PASSWORD: "123@MA456"
+    volumes:
+       - "${SQLSERVER_DATAPATH-/C/docker/db/sql/sqlserver/docker-volume}:/var/opt/mssql"
+    ports:
+      - "1433:1433"
+ 
+  maildev:
+    restart: always
+    container_name: maildev
+    image: djfarrelly/maildev
+    ports:
+      - "1080:80"
+      - "25:25"
+      
+  elasticsearch:
+     restart: always
+     container_name: elasticsearch
+     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+     volumes:
+       - "${ELASTICSEARCH_DATAPATH-/c/docker/db/nosql/elasticsearch/docker-volume}:/usr/share/elasticsearch/data"
+     environment:
+      - discovery.type=single-node
+      #- cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+     ports:
+      - "9200:9200"
+     networks:
+      - elastic
+      
+  kibana:
+    restart: always
+    container_name: kibana
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: http://localhost:9200
+    image: docker.elastic.co/kibana/kibana:7.8.1
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/data/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+      
+networks:
+   elastic:
+      driver: bridge      
