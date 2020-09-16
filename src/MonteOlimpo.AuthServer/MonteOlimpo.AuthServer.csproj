@@ -8,12 +8,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\marlo\Desktop\monte-olimpo-auth-server\src\MonteOlimpo.AuthServer\MonteOlimpo.AuthServer.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\marlo\Desktop\Projetos\monte-olimpo-auth-server\src\MonteOlimpo.AuthServer\MonteOlimpo.AuthServer.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591;S1118</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
       <PrivateAssets>all</PrivateAssets>
@@ -21,7 +20,7 @@
     </PackageReference>
     <PackageReference Include="MonteOlimpo.Base.ApiBoot" Version="3.0.2" />
     <PackageReference Include="MonteOlimpo.Base.Authentication" Version="3.0.1" />
-    <PackageReference Include="MonteOlimpo.Base.Core.CrossCutting" Version="3.0.2" />
+    <PackageReference Include="MonteOlimpo.Base.Core.CrossCutting" Version="3.0.3" />
     <PackageReference Include="MonteOlimpo.Base.Extensions" Version="2.0.3" />
   </ItemGroup>
 

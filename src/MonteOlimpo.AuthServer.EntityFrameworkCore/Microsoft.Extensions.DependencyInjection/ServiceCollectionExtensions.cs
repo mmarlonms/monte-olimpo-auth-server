@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore;
 using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore.Stores;
 using MonteOlimpo.Identity.EntityFrameworkCore.Managers;
-using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

@@ -1,155 +1,125 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using MonteOlimpo.Authentication.JwtBearer;
 using MonteOlimpo.AuthServer.Dto;
+using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore;
 using MonteOlimpo.Base.ApiBoot;
-using MonteOlimpo.Base.Authentication;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+using MonteOlimpo.Identity.Abstractions;
 
-namespace MonteOlimpo.AuthServer.Controllers
+namespace Symplicity.AuthServer.Controllers
 {
     public class AuthController : ApiBaseController
     {
-        private readonly TokenConfigurations tokenConfigurations;
+        public IUserPrincipalTokenizer UserPrincipalTokenizer { get; }
+        public JwtConfiguration JwtConfiguration { get; }
+        public UserManager<IdentityUserEntity> AppUserManager { get; }
+        public ILogger<AuthController> Logger { get; }
 
-        public AuthController(TokenConfigurations tokenConfigurations)
+        public AuthController(
+            IUserPrincipalTokenizer userPrincipalTokenizer,
+            JwtConfiguration jwtConfiguration,
+            UserManager<IdentityUserEntity> appUserManager,
+            ILogger<AuthController> logger)
         {
-            this.tokenConfigurations = tokenConfigurations;
+            UserPrincipalTokenizer = userPrincipalTokenizer;
+            JwtConfiguration = jwtConfiguration;
+            AppUserManager = appUserManager;
+            Logger = logger;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<object> LoginAsync(
-           [FromBody]AuthDto authDto,
-           [FromServices] UserManager<IdentityUser> userManager)
+        public async Task<object> LoginAsync([FromBody]AuthDto authDto)
         {
-
-            IdentityUser identityUser = new IdentityUser();
+            IdentityUserEntity identityUser = null;
 
             bool credenciaisValidas = false;
 
             if (authDto != null && !String.IsNullOrWhiteSpace(authDto.UserName) && !String.IsNullOrWhiteSpace(authDto.UserPassword))
             {
-                identityUser = await userManager.FindByNameAsync(authDto.UserName);
-                credenciaisValidas = await userManager.CheckPasswordAsync(identityUser, authDto.UserPassword);
+                var normalizedUserName = authDto.UserName.ToUpper().Trim();
+                identityUser = await AppUserManager.Users
+                  .Include(u => u.IdentityUserRoles)
+                      .ThenInclude(ur => ur.IdentityRole)
+                        .ThenInclude(ur => ur.IdentityRoleClaims)
+                    .Include(u => u.IdentityUserRoles)
+                          .ThenInclude(ur => ur.IdentityRole)
+                  .Include(u => u.IdentityClaims)
+
+                  .SingleOrDefaultAsync(u => u.NormalizedUserName == normalizedUserName);
+
+                if (identityUser != null)
+                    credenciaisValidas = await AppUserManager.CheckPasswordAsync(identityUser, authDto.UserPassword);
+
             }
 
             if (credenciaisValidas)
             {
-                ClaimsIdentity identity = new ClaimsIdentity(
-                    new GenericIdentity(identityUser.Id.ToString(), "Login"),
-                    new[] {
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-                        new Claim(JwtRegisteredClaimNames.UniqueName,identityUser.Id.ToString())
-                    }
-                );
-
-
-                var roles = await userManager.GetRolesAsync(identityUser);
-
-                foreach (var role in roles)
-                {
-                    identity.AddClaim(new Claim(ClaimTypes.Role, role));
-                }
-
-                identity.AddClaim(new Claim("user_id", identityUser.Id.ToString()));
-
-                identity.AddClaim(new Claim("username", identityUser.UserName));
-                DateTime dataCriacao = DateTime.Now;
-                DateTime dataExpiracao = dataCriacao +
-                    TimeSpan.FromSeconds(tokenConfigurations.Seconds);
-
-                var handler = new JwtSecurityTokenHandler();
-                var securityToken = handler.CreateToken(new SecurityTokenDescriptor
-                {
-                    Issuer = tokenConfigurations.Issuer,
-                    Audience = tokenConfigurations.Audience,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfigurations.Secret)), SecurityAlgorithms.HmacSha256),
-                    Subject = identity,
-                    NotBefore = dataCriacao,
-                    Expires = dataExpiracao
-                });
-
-
-                var token = handler.WriteToken(securityToken);
-
-                return new
-                {
-                    authenticated = true,
-                    created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
-                    expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),
-                    accessToken = token,
-                    message = "OK"
-                };
+                Logger.LogInformation("Login realizado as {1}", DateTime.Now.ToString());
+                return Ok(new AuthPostResult(UserPrincipalTokenizer.GenerateToken(identityUser)));
             }
-            else
-            {
-                return new
-                {
-                    authenticated = false,
-                    message = "Falha ao autenticar"
-                };
-            }
-        }
 
-        private TokenValidationParameters GetValidationParameters()
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateLifetime = false, // Because there is no expiration in the generated token
-                ValidateAudience = true, // Because there is no audiance in the generated token
-                ValidateIssuer = true,   // Because there is no issuer in the generated token
-                ValidIssuer = this.tokenConfigurations.Issuer,
-                ValidAudience = this.tokenConfigurations.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.tokenConfigurations.Secret)) // The same key as the one that generate the token
-            };
-        }
+            if (!credenciaisValidas)
+                return SemPermissao(authDto);
 
-        private bool ValidateToken(string authToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = GetValidationParameters();
-
-            tokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
-            return true;
+            return FalhaAoAntenticar(authDto);
         }
 
         [AllowAnonymous]
-        [HttpPost("refresh-token")]
-        public object RefreshToken(
-           string token)
+        [HttpPost("login/token")]
+        public async Task<object> LoginWithTokenAsync([FromBody]AuthTokenDto authTokenDto)
         {
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadToken(authTokenDto.Token) as JwtSecurityToken;
 
-            DateTime dataCriacao = DateTime.Now;
-            DateTime dataExpiracao = dataCriacao +
-                TimeSpan.FromSeconds(tokenConfigurations.Seconds);
+            if (!UserPrincipalTokenizer.ValidateToken(authTokenDto.Token, false))
+                FalhaAoAntenticar(null);
 
-            if (ValidateToken(token))
+            var userName = tokenS.Claims.Where(_ => _.Type == "email").FirstOrDefault().Value;
+            var portal = Convert.ToInt32(tokenS.Claims.Where(_ => _.Type == ClaimNames.PortalCode).FirstOrDefault().Value);
+
+            IdentityUserEntity identityUser = null;
+
+            var normalizedUserName = userName.ToUpper().Trim();
+            identityUser = await AppUserManager.Users
+              .Include(u => u.IdentityUserRoles)
+                  .ThenInclude(ur => ur.IdentityRole)
+                   .ThenInclude(ur => ur.IdentityRoleClaims)
+              .Include(u => u.IdentityClaims)
+              .SingleOrDefaultAsync(u => u.NormalizedUserName == normalizedUserName);
+
+            var token = UserPrincipalTokenizer.GenerateToken(identityUser, authTokenDto.Role);
+            if (token != null)
+                return Ok(new AuthPostResult(token));
+
+            return SemPermissao(null);
+        }
+
+        private object FalhaAoAntenticar(AuthDto authDto)
+        {
+            Logger.LogWarning("Falha ao autenticar o usuário {0}.", authDto?.UserName);
+            return new
             {
+                authenticated = false,
+                message = "Falha ao autenticar"
+            };
+        }
 
-                return new
-                {
-                    authenticated = true,
-                    created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
-                    expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),
-                    accessToken = token,
-                    message = "OK"
-                };
-            }
-            else
+        private object SemPermissao(AuthDto authDto)
+        {
+            Logger.LogWarning("Acesso indevido pelo usuário {1}.", authDto?.UserName);
+            return new
             {
-                return new
-                {
-                    authenticated = false,
-                    message = "Falha ao autenticar"
-                };
-            }
+                authenticated = false,
+                message = "Sem permissão"
+            };
         }
     }
 }

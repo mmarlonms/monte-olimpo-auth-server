@@ -7,13 +7,14 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
 {
     public class IdentityInitializer
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<IdentityUserEntity> userManager;
+        private readonly RoleManager<IdentityRoleEntity> roleManager;
 
         private readonly ILogger logger;
 
-        public IdentityInitializer(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,
+        public IdentityInitializer(
+            UserManager<IdentityUserEntity> userManager,
+            RoleManager<IdentityRoleEntity> roleManager,
             ILoggerFactory loggerFactory)
         {
             this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -25,8 +26,8 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
 
         public void InitializeRoles()
         {
-            var roleAdmin = new IdentityRole() { Name = "admin", NormalizedName = "Admin" };
-            var roleUser = new IdentityRole() { Name = "user", NormalizedName = "User" };
+            var roleAdmin = new IdentityRoleEntity() { Name = "admin", NormalizedName = "Admin" };
+            var roleUser = new IdentityRoleEntity() { Name = "user", NormalizedName = "User" };
 
             CreateRoleAsync(roleAdmin);
             CreateRoleAsync(roleUser);
@@ -34,7 +35,7 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
 
         public async Task InitializeUsersAsync()
         {
-            await CreateUserAsync(new IdentityUser()
+            await CreateUserAsync(new IdentityUserEntity()
             {
                 UserName = "admin",
                 NormalizedUserName = "Admin",
@@ -42,7 +43,7 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
 
             }, "admin");
 
-            await CreateUserAsync(new IdentityUser()
+            await CreateUserAsync(new IdentityUserEntity()
             {
                 UserName = "user",
                 NormalizedUserName = "User",
@@ -51,7 +52,7 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
             }, "user");
         }
 
-        private void CreateRoleAsync(IdentityRole role)
+        private void CreateRoleAsync(IdentityRoleEntity role)
         {
             try
             {
@@ -70,7 +71,7 @@ namespace MonteOlimpo.AuthServer.Identity.EntityFrameworkCore
             }
         }
 
-        private async Task CreateUserAsync(IdentityUser user, string additionalRoles = null)
+        private async Task CreateUserAsync(IdentityUserEntity user, string additionalRoles = null)
         {
             var userEntity = await userManager.FindByNameAsync(user.UserName);
             if (userEntity == null)

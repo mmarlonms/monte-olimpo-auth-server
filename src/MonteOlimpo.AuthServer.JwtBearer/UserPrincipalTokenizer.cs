@@ -34,23 +34,23 @@ namespace MonteOlimpo.Authentication.JwtBearer
             return GenerateToken(GenerateClaimsIdentity(userPrincipal));
         }
 
-        public GenerateTokenResult GenerateToken(IUserPrincipal userPrincipal, string roleName)
+        public GenerateTokenResult GenerateToken(IUserPrincipal userPrincipal, string role)
         {
             var identity = GenerateClaimsIdentity(userPrincipal);
 
-            var role = userPrincipal.Roles.Where(_ => _.Name == roleName).FirstOrDefault();
+            var roleEntity = userPrincipal.Roles.FirstOrDefault(_ => _.Name == role);
 
-            if (role == null)
+            if (roleEntity == null)
                 return null;
 
-            foreach (var roleClaims in role.Claims)
+            foreach (var roleClaims in roleEntity.Claims)
                 identity.AddClaim(new Claim(roleClaims.Type, roleClaims.Value));
 
-            identity.AddClaim(new Claim(ClaimNames.UserRole, role.Name));
+            identity.AddClaim(new Claim(ClaimNames.UserRole, roleEntity.Name));
 
             //Monta as outras permissões
             if (userPrincipal.Claims != null && userPrincipal.Claims.Any())
-                foreach (var claim in userPrincipal.Claims.Where(c => c.Type != ClaimNames.ClientId && c.Type != ClaimNames.CnetPermission))
+                foreach (var claim in userPrincipal.Claims.Where(c => c.Type != ClaimNames.ClientId))
                     identity.AddClaim(new Claim(ClaimNames.Permission, claim.Value));
 
             return GenerateToken(identity);
@@ -107,10 +107,10 @@ namespace MonteOlimpo.Authentication.JwtBearer
 
         public bool ValidateToken(string authToken, bool validateTime)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = GetValidationParameters(validateTime);
 
-            tokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
+            jwtSecurityTokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
             return true;
         }
 

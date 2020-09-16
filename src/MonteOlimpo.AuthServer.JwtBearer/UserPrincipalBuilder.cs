@@ -48,15 +48,9 @@ namespace MonteOlimpo.Authentication.JwtBearer
                 Claims = new List<Claim>(),
             };
 
-            var claimsIdentity = HttpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
-            if (claimsIdentity == null || !claimsIdentity.Claims.Any())
+            if (!(HttpContextAccessor.HttpContext?.User?.Identity is ClaimsIdentity claimsIdentity) || !claimsIdentity.Claims.Any())
                 return userPrincipal;
 
-            var audClaim = claimsIdentity.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.Aud) ??
-               throw new InvalidOperationException("ClaimsIdentity does not contain a valid claim for Audience which represents the ClientId.");
-
-            var subClaim = claimsIdentity.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub || c.Type == ClaimTypes.NameIdentifier) ??
-                throw new InvalidOperationException("ClaimsIdentity does not contain a valid claim for Subject which represents the Username.");
 
             foreach (var claim in claimsIdentity.Claims)
             {

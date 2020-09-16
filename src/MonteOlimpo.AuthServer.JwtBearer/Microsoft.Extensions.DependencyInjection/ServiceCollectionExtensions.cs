@@ -27,8 +27,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddUserPrincipalBuilder();
 
-            var jwtConfiguration = configuration.TryGet<JwtConfiguration>();
-            services.AddSingleton(jwtConfiguration ?? throw new ArgumentNullException(nameof(jwtConfiguration)));
+            JwtConfiguration jwtConfiguration = configuration.TryGet<JwtConfiguration>();
+            services.AddSingleton(jwtConfiguration ?? throw new ArgumentNullException(nameof(JwtConfiguration)));
 
             var validIssuer = Guid.TryParse(jwtConfiguration.Issuer, out var guidIssuer)
                 ? guidIssuer.ToString()

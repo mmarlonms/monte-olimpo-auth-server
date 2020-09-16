@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MonteOlimpo.AuthServer.Identity;
 using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore;
 using MonteOlimpo.Base.ApiBoot;
-using MonteOlimpo.Base.Authentication;
 using MonteOlimpo.Base.Core.CrossCutting;
 
 namespace MonteOlimpo.AuthServer
@@ -21,16 +19,17 @@ namespace MonteOlimpo.AuthServer
         public override void ConfigureServices(IServiceCollection services)
         {
             base.ConfigureServices(services);
-
             services.RegisterMonteOlimpoDataBase<ApplicationDbContext>(Configuration);
             services.AddAuthIdentity(Configuration.GetSection("IdentityConfiguration").Get<IdentityConfiguration>(), AddIdentityOptions);
-            services.AddJWTAuthentication(Configuration.GetSection("TokenConfigurations").Get<TokenConfigurations>());
+            services.AddJwtAuthenticationProvider();
+            services.AddJwtAuthentication(Configuration);
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             base.Configure(app, env);
+
             app.RunAuthIdentityMigrations();
             app.RunAuthIdentityInitializer();
         }

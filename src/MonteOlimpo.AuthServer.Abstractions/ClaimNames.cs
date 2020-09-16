@@ -11,7 +11,6 @@
         public const string Permission = "permission";
         public const string UserRole = "user_role";
         public const string Credencial = "credential";
-        public static string CnetPermission = "CTN-Permission";
-        public static string Roles = "roles";
+        public const string Roles = "roles";
     }
 }
