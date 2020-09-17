@@ -10,7 +10,7 @@ services:
       MSSQL_PID: Developer
       SA_PASSWORD: "123@MA456"
     volumes:
-       - "${SQLSERVER_DATAPATH-/C/docker/db/sql/sqlserver/docker-volume}:/var/opt/mssql"
+       - "${SQLSERVER_DATAPATH-/g/docker/db/sql/sqlserver/docker-volume}:/var/opt/mssql"
     ports:
       - "1433:1433"
  
@@ -27,7 +27,7 @@ services:
      container_name: elasticsearch
      image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
      volumes:
-       - "${ELASTICSEARCH_DATAPATH-/c/docker/db/nosql/elasticsearch/docker-volume}:/usr/share/elasticsearch/data"
+       - "${ELASTICSEARCH_DATAPATH-/g/docker/db/nosql/elasticsearch/docker-volume}:/usr/share/elasticsearch/data"
      environment:
       - discovery.type=single-node
       #- cluster.name=docker-cluster

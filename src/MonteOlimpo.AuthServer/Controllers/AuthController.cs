@@ -13,7 +13,7 @@ using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore;
 using MonteOlimpo.Base.ApiBoot;
 using MonteOlimpo.Identity.Abstractions;
 
-namespace Symplicity.AuthServer.Controllers
+namespace MonteOlimpo.AuthServer.Controllers
 {
     public class AuthController : ApiBaseController
     {
@@ -62,7 +62,7 @@ namespace Symplicity.AuthServer.Controllers
 
             if (credenciaisValidas)
             {
-                Logger.LogInformation("Login realizado as {1}", DateTime.Now.ToString());
+                Logger.LogInformation("Login realizado as {UserName}", DateTime.Now.ToString());
                 return Ok(new AuthPostResult(UserPrincipalTokenizer.GenerateToken(identityUser)));
             }
 
@@ -104,7 +104,7 @@ namespace Symplicity.AuthServer.Controllers
 
         private object FalhaAoAntenticar(AuthDto authDto)
         {
-            Logger.LogWarning("Falha ao autenticar o usuário {0}.", authDto?.UserName);
+            Logger.LogWarning("Falha ao autenticar o usuário {UserName}.", authDto?.UserName);
             return new
             {
                 authenticated = false,
@@ -114,7 +114,7 @@ namespace Symplicity.AuthServer.Controllers
 
         private object SemPermissao(AuthDto authDto)
         {
-            Logger.LogWarning("Acesso indevido pelo usuário {1}.", authDto?.UserName);
+            Logger.LogWarning("Acesso indevido pelo usuário {UserName}.", authDto?.UserName);
             return new
             {
                 authenticated = false,
