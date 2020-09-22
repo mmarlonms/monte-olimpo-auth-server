@@ -1,17 +1,17 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MonteOlimpo.Authentication.JwtBearer;
 using MonteOlimpo.AuthServer.Dto;
 using MonteOlimpo.AuthServer.Identity.EntityFrameworkCore;
 using MonteOlimpo.Base.ApiBoot;
+using MonteOlimpo.Base.Authentication;
 using MonteOlimpo.Identity.Abstractions;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MonteOlimpo.AuthServer.Controllers
 {

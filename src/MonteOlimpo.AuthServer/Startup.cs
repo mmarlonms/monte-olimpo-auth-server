@@ -22,6 +22,7 @@ namespace MonteOlimpo.AuthServer
             services.RegisterMonteOlimpoDataBase<ApplicationDbContext>(Configuration);
             services.AddAuthIdentity(Configuration.GetSection("IdentityConfiguration").Get<IdentityConfiguration>(), AddIdentityOptions);
             services.AddJwtAuthenticationProvider();
+            services.AddUserPrincipalBuilder();
             services.AddJwtAuthentication(Configuration);
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using MonteOlimpo.Base.Authentication;
 using MonteOlimpo.Identity.Abstractions;
 
 namespace MonteOlimpo.Authentication.JwtBearer

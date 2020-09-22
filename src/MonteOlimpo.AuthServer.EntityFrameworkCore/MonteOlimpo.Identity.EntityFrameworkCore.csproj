@@ -14,11 +14,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.8" />
     <PackageReference Include="MonteOlimpo.Base.Core.Domain" Version="3.0.5" />
-    <PackageReference Include="MonteOlimpo.Base.Extensions" Version="2.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MonteOlimpo.AuthServer.Abstractions\MonteOlimpo.Identity.Abstractions.csproj" />
+    <PackageReference Include="MonteOlimpo.Base.Extensions" Version="3.0.0" />
+    <PackageReference Include="MonteOlimpo.Base.Identity.Abstractions" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
