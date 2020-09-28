@@ -18,11 +18,17 @@ namespace MonteOlimpo.AuthServer
 
         public override void ConfigureServices(IServiceCollection services)
         {
+
             base.ConfigureServices(services);
+            //Registra data base
             services.RegisterMonteOlimpoDataBase<ApplicationDbContext>(Configuration);
+
+            //Registra serviços de Autenticação
             services.AddAuthIdentity(Configuration.GetSection("IdentityConfiguration").Get<IdentityConfiguration>(), AddIdentityOptions);
             services.AddJwtAuthenticationProvider();
             services.AddUserPrincipalBuilder();
+
+            //ADD autenticação via JWT
             services.AddJwtAuthentication(Configuration);
         }
 
